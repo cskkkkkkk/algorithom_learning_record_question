@@ -1,0 +1,39 @@
+#include<iostream>
+using namespace std;
+int n, m;
+int l_x[1005];
+int l_y[1005];
+int r_x[1005];
+int r_y[1005];
+int matrix[1005][1005];
+int Dh[1005][1005];
+int sum[1005][1005];
+
+void D()
+{
+	for (int i = 0; i <m; i++)
+	{
+		Dh[l_x[i]-1][l_y[i]-1] += 1;
+		Dh[r_x[i] + 1][r_y[i] + 1] += 1;
+		Dh[r_x[i] + 1][l_y[i] - 1] -= 1;
+		Dh[l_x[i] - 1][r_y[i] + 1] -= 1;
+	}
+	//用递推法求最终答案
+	for (int i = 1; i <= m; i++)
+	{
+		for (int j = 1; j <= m; j++)
+		{
+			sum[i][j] = Dh[i][j] + sum[i - 1][j] + sum[i][j - 1] - sum[i - 1][j - 1];
+		}
+	}
+}
+int main()
+{
+	cin >> n >> m;
+	for (int i = 0; i < m; i++)
+	{
+		cin >> l_x[i] >> l_y[i] >> r_x[i] >> r_y[i];
+	}
+	D();//差分修改区间和一次查询问题
+	
+}
