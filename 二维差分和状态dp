@@ -1,0 +1,53 @@
+#include<iostream>
+using namespace std;
+
+#define infinitesimal -2100000000
+#define maxn 150
+#define maxm 20
+int n, m, t;
+int matrix[maxn][maxn];
+int ans = infinitesimal;
+int temp[maxn];
+int dp[maxn];
+
+void Arrsum()
+{
+	memset(dp, 0, sizeof(dp));
+	for (int i = 1; i <= n; i++)
+	{
+		dp[i] = max(dp[i], dp[i - 1] + temp[i]);
+		ans = max(ans, dp[i]);
+	}
+}
+
+void MatrixSum()
+{
+	for (int i = 1; i <= n; i++)
+	{
+		memset(temp, 0, sizeof(temp));
+		for (int j = i; j <= n; j++)
+		{
+			for (int k = 1; k <= n; k++)
+			{
+				temp[k] += matrix[j][k];
+			}
+			Arrsum();
+		}
+	}
+}
+
+int main()
+{
+	cin >> n;
+	for (int i = 1; i <= n; i++)
+
+	{
+		for (int j = 1; j <= n; j++)
+		{
+			cin >> matrix[i][j];
+		}
+	}
+	MatrixSum();
+	cout << ans << endl;
+
+}
