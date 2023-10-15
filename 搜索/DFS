@@ -1,0 +1,76 @@
+#include<iostream>
+#include<string>
+using namespace std;
+struct node
+{
+	int x, y;
+}c[105];//记录路径
+char arr[105][105];
+string token = "yizhong";
+int vis[105][105];//是否被访问过
+int ischar[105][105];//把最终是
+int tox[8] = { 0,0,-1,1,1,1,-1,-1 };//上，下，左，右，左上，左下，右上，右下
+int toy[8] = { 1,-1,0,0,1,-1,1,-1 };
+void dfs(int ids,int x,int y,int k)//这个ids代表了你现在正在地图上匹配token串中第几个字符比如说ids=1，则正在验证的字符为'i',k代表了方向序号
+{
+	if (ids == 7)//结束递归
+	{
+		for (int i = 0; i < 7; i++)
+		{
+			vis[c[i].x][c[i].y] = 1;
+		}
+	}
+	else {
+		int n_x = x + tox[k];
+		int n_y = y + toy[k];
+		//分为终点，和中间点两种情况
+		if (ids == 6 || arr[n_x][n_y] == token[ids + 1])
+		{
+			c[ids].x = x;
+			c[ids].y = y;
+			dfs(ids + 1, n_x, n_y, k);
+	    }
+	}
+}
+int main()
+{
+	int n;
+	cin >> n;
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+			cin >> arr[i][j];
+		}
+	}
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+			if (arr[i][j] == 'y')
+			{
+				for (int k = 0; k < 8; k++)
+				{
+					int dx = i + tox[k];
+					int dy = j + toy[k];
+					if (arr[dx][dy] == 'i')
+						dfs(0, i, j,k);
+				}
+			}
+		}
+	}
+
+	//输出结果
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+			if (vis[i][j])
+				cout << arr[i][j];
+			else
+				cout << "*";
+		}
+		cout << endl;
+	}
+
+}
