@@ -1,0 +1,279 @@
+#include<iostream>
+#include<algorithm>
+#include<fstream>
+#include<vector>
+#include<string>
+using namespace std;
+void swap(int* p, int i, int j)
+{
+	int temp;
+	temp = p[i];
+	p[i] = p[j];
+	p[j] = temp;
+}
+struct minheap
+{
+	int* heap;//存放着堆的数组
+	int size;//在堆里的最大元素数量
+	int n;//目前在堆里有的元素数量
+	minheap(int* heap, int size, int n) :heap(heap), size(size), n(n) {};
+	int heapsize()
+	{
+		return size;
+	}
+
+	bool isLeaf(int pos)
+	{
+		return (pos >= n / 2) && (pos < n);//这里之所有选择的是n/2是因为n-1的父节点也就是最后一个内节点为n/2-1所以第一个叶子节点也就变成了n/2
+	}
+	int leftchild(int pos)
+	{
+		return 2 * pos + 1;
+	}
+	int rightchild(int pos)
+	{
+		return 2 * pos + 2;
+	}
+	int parent(int pos)
+	{
+		return (pos - 1) / 2;
+	}
+	bool insert(int val)
+	{
+		if (n >= size)
+			return false;
+		int curr = n++;
+		heap[curr] = val;
+		while ((curr != 0) && heap[curr] < heap[parent(curr)])
+		{
+			swap(heap, curr, parent(curr));
+			curr = parent(curr);
+		}
+		return true;
+	}
+
+	void siftdown(int pos)
+	{
+		while (!isLeaf(pos))
+		{
+			int j = leftchild(pos);
+			int rc = rightchild(pos);
+			if (heap[j] > heap[rc])
+				j = rc;
+			if (heap[pos] <= heap[j])return;
+			swap(heap, j, pos);
+
+			pos = j;
+		}
+	}
+
+	void buildHeap()
+	{
+		for (int i = n / 2 - 1; i >= 0; i--)
+		{
+			siftdown(i);
+		}
+	}
+
+	bool removemin()
+	{
+		if (n == 0)return false;
+		swap(heap, 0, --n);
+		if (n != 0)
+			siftdown(0);
+		return true;
+	}
+
+	bool remove(int pos)
+	{
+		if (pos < 0 || pos >= n)
+		{
+			return false;
+		}
+		swap(heap, pos, --n);
+		while ((heap[pos] < heap[parent(pos)]) && (pos != 0))
+		{
+			swap(heap, pos, parent(pos));
+			pos = parent(pos);
+		}
+		siftdown(pos);
+		return true;
+	}
+};
+
+struct maxheap
+{
+	int* heap;//存放着堆的数组
+	int size;//在堆里的最大元素数量
+	int n;//目前在堆里有的元素数量
+	maxheap(int* heap, int size, int n) :heap(heap), size(size), n(n) {};
+	int heapsize()
+	{
+		return size;
+	}
+
+	bool isLeaf(int pos)
+	{
+		return (pos >= n / 2) && (pos < n);//这里之所有选择的是n/2是因为n-1的父节点也就是最后一个内节点为n/2-1所以第一个叶子节点也就变成了n/2
+	}
+	int leftchild(int pos)
+	{
+		return 2 * pos + 1;
+	}
+	int rightchild(int pos)
+	{
+		return 2 * pos + 2;
+	}
+	int parent(int pos)
+	{
+		return (pos - 1) / 2;
+	}
+	bool insert(int val)
+	{
+		if (n >= size)
+			return false;
+		int curr = n++;
+		heap[curr] = val;
+		while ((curr != 0) && heap[curr] > heap[parent(curr)])
+		{
+			swap(heap, curr, parent(curr));
+			curr = parent(curr);
+		}
+		return true;
+	}
+
+	void siftdown(int pos)
+	{
+		while (!isLeaf(pos))
+		{
+			int j = leftchild(pos);
+			int rc = rightchild(pos);
+			if (heap[j] < heap[rc])
+				j = rc;
+			if (heap[pos] >= heap[j])return;
+			swap(heap, j, pos);
+
+			pos = j;
+		}
+	}
+
+	void buildHeap()
+	{
+		for (int i = n / 2 - 1; i >= 0; i--)
+		{
+			siftdown(i);
+		}
+	}
+
+	bool removemax()
+	{
+		if (n == 0)return false;
+		swap(heap, 0, --n);
+		if (n != 0)
+			siftdown(0);
+		return true;
+	}
+
+	bool remove(int pos)
+	{
+		if (pos < 0 || pos >= n)
+		{
+			return false;
+		}
+		swap(heap, pos, --n);
+		while ((heap[pos] > heap[parent(pos)]) && (pos != 0))
+		{
+			swap(heap, pos, parent(pos));
+			pos = parent(pos);
+		}
+		siftdown(pos);
+		return true;
+	}
+};
+
+int main()
+{
+	string comm;
+	cin >> comm;
+	ifstream inputFile("mtest.dat");
+	vector<int>temp;
+	int x;
+	while (inputFile >> x)
+	{
+		temp.push_back(x);
+	}
+
+	if (comm == "max")
+	{
+
+		int* tem = new int[temp.size()];
+		for (int i = 0; i < temp.size(); i++)
+		{
+			tem[i] = temp[i];
+		}
+		maxheap mh(tem, temp.size(), temp.size());
+		sort(temp.rbegin(), temp.rend());
+		cout << "QSort Result: ";
+		for (int i = 0; i < 10; i++)
+		{
+			if (i == 9)
+				cout << temp[i] << endl;
+			else
+				cout << temp[i] << " ";
+		}
+		cout << "QTime: *" << endl;
+		cout << "Heap Result: ";
+		mh.buildHeap();
+		for (int i = 0; i < 9; i++)
+			mh.removemax();
+		for (int i = 9; i >=0; i--)
+		{
+			if (i == 0)
+			{
+				cout << temp[i] << endl;
+			}
+			else
+			{
+				cout << temp[i] << " ";
+			}
+		}
+		cout << "HTime: *" << endl;
+	}
+	if (comm == "min")
+	{
+		int* tem = new int[temp.size()];
+		for (int i = 0; i < temp.size(); i++)
+		{
+			tem[i] = temp[i];
+		}
+		minheap mh(tem, temp.size(), temp.size());
+		sort(temp.begin(), temp.end());
+		cout << "QSort Result: ";
+		for (int i = 0; i < 10; i++)
+		{
+			if (i == 9)
+				cout << temp[i] << endl;
+			else
+				cout << temp[i] << " ";
+		}
+		cout << "QTime: *" << endl;
+		cout << "Heap Result: ";
+		mh.buildHeap();
+		for (int i = 0; i <10; i++)
+		{
+			if (i == 0)
+			{
+				//cout << mh.heap[0] << endl;
+				//mh.removemin();
+				cout << temp[i] << endl;
+			}
+			else
+			{
+				//cout << mh.heap[0] << " ";
+				//mh.removemin();
+				cout << temp[i] << " ";
+			}
+		}
+		cout << "HTime: *" << endl;
+	}
+}
