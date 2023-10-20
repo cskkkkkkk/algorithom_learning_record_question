@@ -1,0 +1,46 @@
+#include <iostream>
+#include <vector>
+
+int binarySearch(const std::vector<int>& A, int target) {
+    int left = 0;
+    int right = A.size() - 1;
+    int result = -1;
+
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+
+        if (A[mid] < target) {
+            result = mid;
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    std::vector<int> A;
+    int target;
+
+    // 读取输入数组A
+    std::string input;
+    std::getline(std::cin, input);
+    std::istringstream iss(input);
+    int num;
+    while (iss >> num) {
+        A.push_back(num);
+    }
+
+    // 读取目标值target
+    std::cin >> target;
+
+    // 使用二分查找查找最大的i
+    int result = binarySearch(A, target);
+
+    // 输出结果
+    std::cout << result << std::endl;
+
+    return 0;
+}
