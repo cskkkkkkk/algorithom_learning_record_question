@@ -1,0 +1,26 @@
+//单点修改区间查询
+
+#include<iostream>
+using namespace std;
+const int N = 1000;
+#define lowbit(x) ((x)&-(x))
+int tree[N] = { 0 };
+void update(int x, int d)
+{
+	while (x <= N)
+	{
+		tree[x] += d;
+		x += lowbit(x);
+	}
+}
+
+int sum(int x)
+{
+	int ans = 0;
+	while (x > 0)
+	{
+		ans += tree[x];
+		x -= lowbit(x);
+	}
+	return ans;
+}
