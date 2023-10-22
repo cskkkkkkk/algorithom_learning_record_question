@@ -1,0 +1,67 @@
+//要注意这道题的n<=5e^5,如果说最后每次ans+=的数字的平均值是n/2那么这个也爆3*e^10方了所以要用long long
+
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<map>
+using namespace std;
+int tree[500020];
+int ran[500020];//离散化以后
+long long fin_ans;
+struct point
+{
+	int val;
+	int id;
+}Point[500020];
+bool cmp(point xx, point yy)
+{
+	if (xx.val == yy.val)
+	{
+		return xx.id < yy.id;
+	}
+	return xx.val < yy.val;
+}
+int n;
+#define lowbit(x) ((x)&-(x))
+void update(int pos,int d)
+{
+	
+	while (pos <= n)
+	{
+		
+		tree[pos] += d;
+		pos += lowbit(pos);
+	}
+}
+
+long long sum(int pos)
+{
+	int ans=0;
+	while (pos > 0)
+	{
+		ans += tree[pos];
+		pos -= lowbit(pos);
+	}
+	return ans;
+}
+int main()
+{
+	
+	cin >> n;
+	for (int i = 1; i <= n; i++)
+	{
+		cin >> Point[i].val;
+		Point[i].id = i;
+	}
+	sort(Point+1, Point+1 + n, cmp);//排序好
+	for (int i = 1; i <= n; i++)
+	{
+		ran[Point[i].id] = i;
+	}
+	for (int i = 1; i <= n; i++)
+	{
+		update(ran[i], 1);
+		fin_ans += i - sum(ran[i]);
+	}
+	cout << fin_ans << endl;
+}
