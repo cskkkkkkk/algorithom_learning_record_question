@@ -1,0 +1,61 @@
+#include<iostream>
+#include<algorithm>
+using namespace std;
+int N, M;
+struct Edge
+{
+	int from, to;
+	int weight;
+}edges[200005];
+bool cmp(Edge a, Edge b)
+{
+	return a.weight < b.weight;
+}
+int ans = 0;
+int cnt = 0;
+int set_[4100];//初始化并查集
+int find(int x)
+{
+	if (x == set_[x])
+		return x;
+	else
+	{
+		 set_[x] = find(set_[x]);
+		 return set_[x];
+	}
+}
+int main()
+{
+	cin >> N >> M;
+	for (int i = 0; i < M; i++)
+	{
+		cin >> edges[i].from >> edges[i].to >> edges[i].weight;
+	}
+	for (int i = 1; i <= N; i++)
+	{
+		set_[i] = i;
+	}
+	sort(edges, edges + M, cmp);
+
+	for (int i = 0; i < M; i++)
+	{
+		if (find(edges[i].from) == find(edges[i].to))
+		{
+			continue;
+		}
+		else
+		{
+			int e1 = find(edges[i].from);
+			int e2 = find(edges[i].to);
+			cnt++;
+			ans += edges[i].weight;
+			set_[e1] = e2;
+		}
+	}
+	if (cnt!=N-1)
+		cout << "orz" << endl;
+	else
+	{
+		cout << ans << endl;
+	}
+}
