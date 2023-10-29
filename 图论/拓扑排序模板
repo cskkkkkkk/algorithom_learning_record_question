@@ -1,0 +1,142 @@
+/*
+
+#include<iostream>
+#include<vector>
+#include<queue>
+using namespace std;
+
+int n;
+int ans=0;
+
+
+struct Edge
+{
+	int from;
+	vector<int>to;
+	int len;
+	
+}edges[10005];
+queue<Edge>qe;//队列
+int in_num[10005];//每个点的入度为多少
+int main()
+{
+	cin >> n;
+	for (int i = 1; i <= n; i++)
+	{
+		cin >> edges[i].from >> edges[i].len;
+		int x;
+		cin >> x;
+		while (x != 0)
+		{   
+			edges[i].to.push_back(x);
+			in_num[x]++;//入度加一
+			cin >> x;
+		}
+	}//输入完毕,有向图创建完毕
+
+	//初始化队列
+	int max_num = 0;
+	for (int i = 1; i <= n; i++)
+	{
+		if (edges[i].to.size() == 0)
+		{
+			qe.push(edges[i]);
+			max_num = max(edges[i].len, max_num);//找到最大的那个数
+		}
+	};
+	 ans += max_num;
+
+	 while (!qe.empty())//只要不为空就一直循环
+	 {
+		 Edge edge = qe.front();
+		 qe.pop();//删除
+		 int max_num = 0;
+		 for (int i = 0; i < edge.to.size(); i++)//遍历from节点的每个to节点
+		 {
+			 in_num[edge.to[i]]--;//减一
+			 if (in_num[edge.to[i]] == 0)//如果入度为0
+			 {
+				 max_num = max(max_num, edge.len);
+				 //入队
+				 qe.push(edges[edge.to[i]]);
+			 }
+
+		 }
+		 ans += max_num;
+	 }
+	 cout << ans << endl;
+}
+*/
+
+#include<iostream>
+#include<vector>
+#include<queue>
+using namespace std;
+
+int n;
+int ans;
+int dp[10005];
+
+struct Edge
+{
+	int from;
+	vector<int>to;
+	int len;
+	
+}edges[10005];
+queue<Edge>qe;//队列
+int in_num[10005];//每个点的入度为多少
+int main()
+{
+	cin >> n;
+	for (int i = 1; i <= n; i++)
+	{
+		cin >> edges[i].from >> edges[i].len;
+		int x;
+		cin >> x;
+		while (x != 0)
+		{   
+			edges[i].to.push_back(x);
+			in_num[x]++;//入度加一
+			cin >> x;
+		}
+	}//输入完毕,有向图创建完毕
+
+	//初始化队列
+	for (int i = 1; i <= n; i++)
+	{
+		if (!in_num[i])
+		{
+			qe.push(edges[i]);
+			dp[i] = edges[i].len;
+		}
+	};
+	
+
+	 while (!qe.empty())//只要不为空就一直循环
+	 {
+		 Edge edge = qe.front();
+		 qe.pop();//删除
+		 int max_num = 0;
+		 for (int i = 0; i < edge.to.size(); i++)//遍历from节点的每个to节点
+		 {
+			 in_num[edge.to[i]]--;//减一
+			 //这里是新加的,运用到了最大子序和，我一开始是没有想到用dp去解决问题的
+			 dp[edge.to[i]] = max(dp[edge.to[i]], dp[edge.from] + edges[edge.to[i]].len);
+			 if (in_num[edge.to[i]] == 0)//如果入度为0
+			 {
+
+				 //入队
+				 qe.push(edges[edge.to[i]]);
+			 }
+
+		 }
+	 }
+	 for (int i = 1; i <= n; i++)
+	 {
+		 ans = max(ans, dp[i]);
+	 }
+	 cout << ans << endl;
+}
+
+
