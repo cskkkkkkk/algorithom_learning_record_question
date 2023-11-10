@@ -1,0 +1,37 @@
+#include<iostream>
+#include<string>
+#include<algorithm>
+using namespace std;
+#define ull unsigned long long
+ull haval[10010];
+ull BKDRHash(string a)
+{
+	ull P = 131, H = 0;
+	for (int i = 0; i < a.size(); i++)
+	{
+		H = H * P + a[i];
+	}
+	return H;
+}
+
+int main()
+{
+	int ans = 0;
+	int n;
+	cin >> n;
+	string a;//存放每次输入的字符串
+	for (int i = 0; i < n; i++)
+	{
+		cin >> a;
+		haval[i] = BKDRHash(a);
+	}
+	sort(haval, haval + n);
+	for (int i = 0; i < n; i++)
+	{
+		if (haval[i] != haval[i + 1])
+		{
+			ans++;
+		}
+	}
+	cout << ans << endl;
+}
