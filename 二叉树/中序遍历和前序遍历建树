@@ -1,0 +1,49 @@
+#include<iostream>
+#include<string>
+#include<algorithm>
+using namespace std;
+
+struct cow
+{
+	char id;
+	cow* left, * right;
+};
+
+char post[30], middle[30];
+void createTree(cow* hh, int ml,int mr,int pl,int pr)
+{
+	if (ml>mr||pl>pr)
+	{
+		return;
+	}
+
+	hh = new cow;
+	hh->id = post[pl];
+	hh->left = hh->right = NULL;
+	int i, j;
+	for (i = ml, j = pl; j <= pr; i++, j++)
+	{
+		if (middle[i] == post[pl])
+			break;
+	}
+
+	createTree(hh->left,0,i-1,pl+1,j);
+	createTree(hh->right,i+1,mr, j+1, pr);
+}
+void afterprint(cow* hh)
+{
+	if (hh == NULL)
+		return;
+	afterprint(hh->left);
+	afterprint(hh->right);
+	cout << hh->id;
+	
+}
+cow* Cow;
+int main()
+{
+	cin >> middle >> post;
+	createTree(Cow, 0,strlen(middle)-1, 0, strlen(post)-1);
+	afterprint(Cow);
+	cout << endl;
+}
