@@ -1,0 +1,44 @@
+#include<iostream>
+#include<vector>
+using namespace std;
+struct node
+{
+	int v, w;//v是子节点，w是(u,v)边的权值
+	node(int v = 0, int w = 0) :v(v), w(w) {};
+};
+const int N = 200;
+vector<node>edge[N];
+int dp[N][N], sum[N];//sum[i]用来记录以i为根的子树的总边数
+
+int n, q;
+void dfs(int u, int father)//u是当前的节点，father是u的父节点
+{
+	for (int i = 0; i < edge[u].size(); i++)
+	{
+		int v = edge[u][i].v, w=edge[u][i].w;
+		if (v == father)continue;//不回头搜索父节点
+		dfs(v, u);
+		sum[u] += sum[v] + 1;
+		for (int j = min(q, sum[u]); j >= 0; j--)
+		{
+			for (int k = 0; k <= min(sum[v], j - 1); k++)
+			{
+				dp[u][j] = max(dp[u][j], dp[u][j - k - 1] + dp[v][k] + w);
+			}
+		}
+	}
+}
+int main()
+{
+	cin >> n >> q;
+	for (int i = 1; i < n; i++)
+	{
+		int u, v, w;
+		cin >> u >> v >> w;
+		edge[u].push_back(node(v, w));
+		edge[v].push_back(node(u, w));
+
+	}
+	dfs(1, 0);
+	cout << dp[1][q] << endl;
+}
