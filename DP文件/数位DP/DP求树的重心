@@ -1,0 +1,68 @@
+#include<iostream>
+#include<vector>
+using namespace std;
+const int maxn = 1001;
+int n;//节点数量
+int deep[maxn];//存储每个节点的深度
+int weight[maxn];//每个节点的权值
+int numWeight[maxn];//存储每个节点的权值和
+int ans;//最终答案
+int disToroot[maxn];//存储每个节点到根节点的距离
+int head[maxn];//存储每个节点的链表头
+int edge_num;//边的数量
+struct edge
+{
+	int to;//边的目标节点
+	int next;//下一条边的索引
+}e[maxn << 1];
+
+inline void add(int u, int v)
+{
+	e[++edge_num].to = v;
+	e[edge_num].next = head[u];
+	head[u] = edge_num;
+}
+
+void dfs(int now, int father)
+{
+	deep[now] = deep[father] + 1;
+	for (int i = head[now]; i; i = e[i].next)
+	{
+		if (e[i].to == father)continue;
+		dfs(e[i].to, now);
+		numWeight[now] += numWeight[e[i].to];
+	}
+}
+
+void dp(int now, int father)
+{
+	for (int i = head[now]; i; i = e[i].next)
+	{
+		if (e[i].to == father)continue;
+		disToroot[e[i].to] = disToroot[now] + numWeight[1] - numWeight[e[i].to] - numWeight[e[i].to];
+		if (disToroot[e[i].to] < ans)ans = disToroot[e[i].to];
+		dp(e[i].to, now);
+	}
+}
+int main()
+{
+	cin >> n;
+	for (int i = 1; i <= n; i++)
+	{
+		int a, b;
+		cin >> weight[i] >> a >> b;
+		numWeight[i] = weight[i];
+		add(i, a);
+		add(a, i);
+		add(i, b);
+		add(b, i);
+	}
+	dfs(1, 0);
+	for (int i = 1; i <= n; i++)
+	{
+		disToroot[1] = (deep[i] - 1) * weight[i];
+	}
+	ans = disToroot[1];
+	dp(1, 0);
+	cout << ans << endl;
+}
