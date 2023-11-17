@@ -1,0 +1,42 @@
+#include<iostream>
+
+using namespace std;
+void Swap(int A[], int i, int j)
+{
+	int temp = A[i];
+	A[i] = A[j];
+	A[j] = temp;
+
+}
+int findpivot(int A[], int i, int j)
+{
+	return (i + j) / 2;
+}
+int partition(int A[], int l, int r, int pivot)
+{
+	do
+	{
+		while (A[l] < A[pivot])l++;//指向第一个大于等于pivot数的位置
+		while ((r > l) && A[r] >= A[pivot])r--;//指向第一个小于pivot数的位置
+		Swap(A, l, r);//交换这两个数字的位置就是让左边存放小于pivot的数，右边存放大于等于pivot的数字
+
+	} while (l < r);
+
+	return l;//此时l=r且指向右边分割后的数组的第一个位置
+}
+void qsort(int A[], int i, int j)
+{
+	if (j <= i)return;//j是分割的右端，i是分割的左端
+	int pivotindex = findpivot(A, i, j);
+
+	Swap(A, pivotindex, j);//把pivot置于数组中的最后位置
+
+	int k = partition(A, i, j, A[j]);//右边数组的第一个位置
+
+	Swap(A, k, j);//把pivot归位置于一个数组中间的位置这个位置的左边是小于这个数字，这个位置的右边就是大于等于这个数字
+
+	qsort(A, i, k-1);//对左边数组进行递归
+
+	qsort(A, k + 1, j);//对右边数组进行递归
+
+}
