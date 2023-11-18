@@ -1,0 +1,74 @@
+#include<iostream>
+#include<vector>
+#include<sstream>
+#include<string>
+using namespace std;
+int n;
+int H(int x)
+{
+	return x % n;
+}
+
+int main()
+{
+	cin >> n;
+	cin.ignore();
+	int* arr = new int[n];
+	for (int i = 0; i < n; i++)
+	{
+		arr[i] = -1;
+	}
+	string input;
+	getline(cin, input);
+	int temp;
+	vector<int>q;
+	istringstream iss(input);
+	while (iss >> temp)
+	{
+		q.push_back(temp);
+	}
+
+
+	for (int i = 0; i < q.size(); i++)
+	{
+		int x;
+		x = q[i];
+		int id=H(x);//得到索引值
+		if (arr[id] == -1)//为空
+		{
+			arr[id] = x;
+		}
+		else//哈希表中那个位置不为空
+		{
+			for (int i = 1; i <= n - 1; i++)
+			{
+				id = (id + 1) % n;
+				if (arr[id] == -1)
+				{
+					arr[id] = x;
+					break;
+				}
+				else
+				{
+					continue;
+				}
+			}
+			
+		}
+
+
+
+		
+	}
+
+	for (int i = 0; i < n; i++)
+	{
+		if (arr[i] == -1)
+			continue;
+		else
+		{
+			cout << i << " " << arr[i] << endl;
+		}
+	}
+	delete[]arr;
+}
