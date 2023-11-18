@@ -1,0 +1,78 @@
+#include<iostream>
+#include<string>
+using namespace std;
+int T;
+struct node
+{
+	char val;
+	int height;
+	node* left;
+	node* right;
+};
+node* root = NULL;
+int createTree(node*& root, int pos, string str)
+{
+	if (isupper(str[pos]))//是大写字母
+	{
+		root = new node;
+		root->val = str[pos];
+		root->left = NULL;
+		root->right = NULL;
+		return 1;
+	}
+	root = new node;
+	root->val = str[pos];
+	root->left = NULL;
+	root->right = NULL;
+	int numleft = createTree(root->left, pos + 1, str);
+	int numright = createTree(root->right, pos + 1 + numleft, str);
+	return numleft + numright + 1;
+}
+int dfs(node*& root)
+{
+	if (isupper(root->val))
+	{
+		root->height = 1;
+		return 1;
+	}
+	root->height = max(dfs(root->left), dfs(root->right)) + 1;
+	return root->height;
+}
+bool isbalanced(node*& root)
+{
+	if (isupper(root->val))
+		return true;
+	if (isbalanced(root->left) && isbalanced(root->right) && (abs(root->left->height - root->right->height) <= 1))
+	{
+		return true;
+	}
+	return false;
+}
+void preOrder(node* root)
+{
+	if (root == NULL)
+		return;
+	cout << root->val << " ";
+	preOrder(root->left);
+	preOrder(root->right);
+	return;
+}
+int main()
+{
+
+	string str;
+	cin >> T;
+	for (int i = 0; i < T; i++)
+	{
+
+		cin >> str;
+		int j = createTree(root, 0, str);
+		dfs(root);
+		if (isbalanced(root))
+			cout << "B" << endl;
+		else
+			cout << "N" << endl;
+
+		root = NULL;
+	}
+}
