@@ -1,0 +1,55 @@
+#include<iostream>
+#include<queue>
+#include<set>
+#include<cstring>
+using namespace std;
+int n, m;
+set<int>graph[100005];
+int vis[100005];
+void init()
+{
+	cin >> n >> m;
+	for (int i = 0; i < m; i++)
+	{
+		int from, to;
+		cin >> from >> to;
+		graph[from].insert(to);
+	}
+	memset(vis, 0, sizeof(vis));
+}
+queue<int>qq;
+void dfs(int x)
+{
+	if (vis[x])return;
+	vis[x] = 1;
+	cout << x << " ";
+	for (int i :graph[x])
+	{
+		dfs(i);
+	}
+}
+
+void bfs()
+{
+	qq.push(1);
+	while (!qq.empty())
+	{
+		int top = qq.front();
+		qq.pop();
+		if (vis[top])continue;
+		vis[top] = 1;
+		cout << top << " ";
+		for (int i : graph[top])
+			qq.push(i);
+	}
+}
+int main()
+{
+	init();
+	dfs(1);
+	cout << endl;
+	memset(vis, 0, sizeof(vis));
+	bfs();
+	cout << endl;
+	
+}
