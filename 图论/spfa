@@ -1,0 +1,66 @@
+#include<iostream>
+#include<cstdio>
+#include<cstring>
+#include<queue>
+#define maxn 50010
+using namespace std;
+queue<int>qu;
+struct EDGE
+{
+    int next;
+    int to;
+    int co;
+}edge[maxn * 5];
+int qr, head[maxn], team[maxn], dis[maxn], exist[maxn];
+int n, m, flag;
+void add(int from, int to, int co)
+{
+    edge[++qr].next = head[from];
+    edge[qr].to = to;
+    edge[qr].co = co;
+    head[from] = qr;
+}
+void spfa()
+{
+    memset(dis, 0x7f, sizeof(dis));
+    memset(exist, 0, sizeof(exist));
+    int h = 0, t = 1;
+    dis[1] = 0; exist[1] = 1; team[1] = 1;
+    qu.push(1);
+    while (!qu.empty())
+    {
+       
+        int u = qu.front();
+        qu.pop();
+        exist[u] = 0;
+        for (int i = head[u]; i != 0; i = edge[i].next)
+        {
+            int v = edge[i].to;
+            if (dis[v] > dis[u] + edge[i].co)
+            {
+                dis[v] = dis[u] + edge[i].co;
+                if (!exist[v])
+                {
+                    exist[v] = 1;
+                    qu.push(v);
+                }
+                if (v == n)
+                    flag = 1;
+            }
+        }
+    }
+}
+int main()
+{
+    cin >> n >> m;
+    for (int i = 1; i <= m; ++i)
+    {
+        int a, b, v;
+        cin >> a >> b >> v;
+        add(a, b, -v);
+    }
+    spfa();
+    if (!flag) printf("-1");
+    else printf("%d", -dis[n]);
+    return 0;
+}
