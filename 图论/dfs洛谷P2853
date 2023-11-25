@@ -1,0 +1,74 @@
+#include<iostream>
+#include<cstring>
+using namespace std;
+int K;//有多少头奶牛
+int N;//有多少个牧场
+int M;//有多少条有向边
+const int maxn = 1010;
+const int maxm = 10010;
+int search[maxn];
+int cnt[maxn];//存放每个牧场在被dfs时候被访问了几次
+int isin[maxn];//判断那个牧场是否有牛
+struct edge
+{
+	int from;
+	int to;
+	int next;
+}e[maxm];
+int head[maxn];
+int cnte;
+void add(int u, int v)
+{
+	cnte++;
+	e[cnte].next = head[u];
+	e[cnte].from = u;
+	e[cnte].to = v;
+	head[u] = cnte;
+}
+
+void dfs(int x)
+{
+	
+	search[x] = 1;
+	cnt[x]++;
+	for (int i = head[x]; i; i = e[i].next)
+	{
+		int to = e[i].to;
+		if (!search[to])
+		{
+			dfs(to);
+		}
+	}
+}
+int ans;
+int main()
+{
+	cin >> K >> N >> M;
+	for (int i = 1; i <= K; i++)
+	{
+		int k;
+		cin >> k;
+		isin[i] = k;
+	}
+	for (int i = 1; i <= M; i++)
+	{
+		int u, v;
+		cin >> u >> v;
+		add(u, v);
+	}
+	for (int i = 1; i <= K; i++)
+	{
+		memset(search, 0, sizeof(search));
+		search[isin[i]] = 1;
+		dfs(isin[i]);
+	}
+	for (int i = 1; i <= N; i++)
+	{
+		if (cnt[i] == K)
+		{
+			ans++;
+		}
+
+	}
+	cout << ans << endl;
+}
