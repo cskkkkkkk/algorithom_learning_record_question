@@ -1,0 +1,88 @@
+#include<iostream>
+#include<queue>
+using namespace std;
+int n;//生物种类
+int m;//代表关系
+//用邻接矩阵存储有向图
+const int maxn = 5010;
+const int maxm = 500010;
+const int s = 80112002;
+struct edge
+{
+	int from;
+	int to;
+	int next;
+}e[maxm];
+int head[maxn];//存储头节点
+int cnt;//代表了边的数量
+int ru[maxn];//存储各个节点的入度
+int chu[maxn];//存储各个节点的出度
+void add(int u, int v)
+{
+	cnt++;
+	e[cnt].next = head[u];
+	e[cnt].from = u;
+	e[cnt].to = v;
+	head[u] = cnt;
+	chu[u]++;
+	ru[v]++;
+	
+}//建图
+
+int num[maxn];//存储每个节点上的最大食物链数量
+
+int ans;//最大食物链数量
+queue<int>qu;//用于拓扑排序的序列
+int vis[maxn];///用于判断是否访问过
+
+
+void topo()//拓扑排序
+{
+	
+	for (int i = 1; i <= n; i++)
+	{
+		if (ru[i] == 0)
+		{
+			qu.push(i);//从一号节点开始
+			num[i] = 1;
+		}
+    }
+
+	while (!qu.empty())
+	{
+		int fa = qu.front();
+		qu.pop();
+		
+			
+		for (int v = head[fa]; v; v = e[v].next)//遍历所有的边
+		{
+			int to = e[v].to;
+			ru[to]--;
+			num[to] += num[fa];//更新数量
+			num[to] %= s;
+			if (ru[to] == 0)
+			{
+			
+				  qu.push(to);
+			}
+
+		}
+		
+	}
+	for (int i = 1; i <= n; i++)
+		if (!chu[i])
+			ans = (ans + num[i]) % s;
+}
+
+int main()
+{
+	cin >> n >> m;
+	for (int i = 0; i < m; i++)
+	{
+		int u, v;
+		cin >> u >> v;
+		add(u, v);
+	}//建图完毕
+	topo();
+	cout << ans  << endl;
+}
