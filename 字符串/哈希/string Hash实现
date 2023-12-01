@@ -1,0 +1,121 @@
+#include<iostream>
+#include<vector>
+#include<string>
+#include<sstream>
+using namespace std;
+struct store
+{
+	int f;
+	string value;
+
+}table[100000];
+int T;//有多少个测试用例
+int M;//一段话里面有多少个单词
+const int base = 131;
+int N;//多少次查询特定的单词
+int cls()
+{
+	for (int i = 0; i < 100000; i++)
+	{
+		table[i].value = "";
+		table[i].f = 0;
+	}
+}
+int getkey(string k)
+{
+	int key=0;
+	for (int i = 0; i < k.size(); i++)
+	{
+		key = key * base+k[i];
+		key %= 100000;
+	}
+	return key;
+}
+//写一个函数去处理有key值冲突
+int p(int key, int i)
+{
+
+	return i*i;
+
+}
+
+const int cnt=1000;//最大偏移次数
+
+bool hashinsert(string e)//处理哈希表
+{
+	int key = getkey(e);
+	int home;//home postion for e
+	int pos = home = key;//key值就是在table中的下标位置
+	int i;
+	for ( i = 1; i <= cnt && table[pos].f; i++)
+	{
+		if (e == table[pos].value)//判断是否相等
+		{
+			table[pos].f++;//相等就出现次数+1
+		}
+		pos = (home + p(key, i)) % 100000;//新的探索位置
+	}
+	if (i > cnt)
+	{
+		return false;
+	}
+	table[pos].value = e;
+	table[pos].f++;
+	return true;
+}
+
+bool hashsearch(string e,int&ff)
+{
+	int key = getkey(e);
+	int home;
+	int pos = home = key;
+	int i;
+	for ( i = 1; i <= cnt && table[pos].f&&e!=table[pos].value; i++)
+	{
+		pos = (home + p(key, i)) % 100000;
+	}
+	if (i > cnt) return false;//超出最大搜索次数都没找到
+	if (e == table[pos].value)
+	{
+		ff = table[pos].f;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+int main()
+{
+	cin >> T;
+	for (int i = 0; i < T; i++)
+	{
+		cin >> M;
+		cin >> N;
+		cin.ignore();
+		string input;
+		getline(cin, input);
+		stringstream ss(input);
+		string temp;
+		while (ss >> temp)
+		{
+			hashinsert(temp);
+		}//输入完毕
+
+		//下面是查询的代码
+		string in;
+		getline(cin, in);
+		stringstream s(in);
+		string qu;
+		while (s >> qu)
+		{
+			int i = 0;
+			hashsearch(qu, i);
+			cout << i << " ";
+		}
+		cout << endl;
+
+		cls();
+
+	}
+}
