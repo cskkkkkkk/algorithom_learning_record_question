@@ -1,0 +1,469 @@
+/*#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<queue>
+using namespace std;
+int n;//顶点
+int e;//边数
+int s;//起始顶点
+queue<int>qu;
+int vis[1000];
+vector<int>arr[1000];
+void add(int u, int v)
+{
+	arr[u].push_back(v);
+}
+void print(int s)
+{
+	cout << s << " ";
+}
+void bfs(int s)
+{
+	qu.push(s);
+	vis[s] = 1;
+	while (!qu.empty())
+	{
+		int top = qu.front();
+		print(top);
+		qu.pop();
+		for (auto& term : arr[top])
+		{
+			if (!vis[term])
+			{
+				qu.push(term);
+				vis[term] = 1;
+			}
+		}
+	}
+}
+int main()
+{
+	int m;//多少种测试用例
+	cin >> m;
+	for (int i = 0; i < m; i++)
+	{
+		cin >> n >> e >> s;
+		for (int j = 0; j < e; j++)
+		{
+			int u, v;
+			cin >> u>> v;
+			add(u, v);
+			add(v, u);
+		}//输入完了以后
+		//给排序一下
+		for (int j = 0; j < n; j++)
+		{
+			sort(arr[j].begin(), arr[j].end());
+	
+		}
+		bfs(s);
+
+	}
+}
+*/
+/*
+#include<iostream>
+#include<algorithm>
+#include<fstream>
+#include<vector>
+#include<string>
+#include<sstream>
+
+using namespace std;
+void swap(int* p, int i, int j)
+{
+	int temp;
+	temp = p[i];
+	p[i] = p[j];
+	p[j] = temp;
+}
+struct minheap
+{
+	int* heap;//存放着堆的数组
+	int size;//在堆里的最大元素数量
+	int n;//目前在堆里有的元素数量
+	minheap(int* heap, int size, int n) :heap(heap), size(size), n(n) {};
+	int heapsize()
+	{
+		return size;
+	}
+
+	bool isLeaf(int pos)
+	{
+		return (pos >= n / 2) && (pos < n);//这里之所有选择的是n/2是因为n-1的父节点也就是最后一个内节点为n/2-1所以第一个叶子节点也就变成了n/2
+	}
+	int leftchild(int pos)
+	{
+		return 2 * pos + 1;
+	}
+	int rightchild(int pos)
+	{
+		return 2 * pos + 2;
+	}
+	int parent(int pos)
+	{
+		return (pos - 1) / 2;
+	}
+	bool insert(int val)
+	{
+		if (n >= size)
+			return false;
+		int curr = n++;
+		heap[curr] = val;
+		while ((curr != 0) && heap[curr] < heap[parent(curr)])
+		{
+			swap(heap, curr, parent(curr));
+			curr = parent(curr);
+		}
+		return true;
+	}
+
+	void siftdown(int pos)
+	{
+		while (!isLeaf(pos))
+		{
+			int j = leftchild(pos);
+			int rc = rightchild(pos);
+			if (heap[j] > heap[rc])
+				j = rc;
+			if (heap[pos] <= heap[j])return;
+			swap(heap, j, pos);
+
+			pos = j;
+		}
+	}
+
+	void buildHeap()
+	{
+		for (int i = n / 2 - 1; i >= 0; i--)
+		{
+			siftdown(i);
+		}
+	}
+
+	bool removemin()
+	{
+		if (n == 0)return false;
+		swap(heap, 0, --n);
+		if (n != 0)
+			siftdown(0);
+		return true;
+	}
+
+	bool remove(int pos)
+	{
+		if (pos < 0 || pos >= n)
+		{
+			return false;
+		}
+		swap(heap, pos, --n);
+		while ((heap[pos] < heap[parent(pos)]) && (pos != 0))
+		{
+			swap(heap, pos, parent(pos));
+			pos = parent(pos);
+		}
+		siftdown(pos);
+		return true;
+	}
+};
+
+struct maxheap
+{
+	int* heap;//存放着堆的数组
+	int size;//在堆里的最大元素数量
+	int n;//目前在堆里有的元素数量
+	maxheap(int* heap, int size, int n) :heap(heap), size(size), n(n) {};
+	int heapsize()
+	{
+		return size;
+	}
+	bool isLeaf(int pos)
+	{
+		return (pos >= n / 2) && (pos < n);//这里之所有选择的是n/2是因为n-1的父节点也就是最后一个内节点为n/2-1所以第一个叶子节点也就变成了n/2
+	}
+	int leftchild(int pos)
+	{
+		return 2 * pos + 1;
+	}
+	int rightchild(int pos)
+	{
+		return 2 * pos + 2;
+	}
+	int parent(int pos)
+	{
+		return (pos - 1) / 2;
+	}
+	bool insert(int val)
+	{
+		if (n >= size)
+			return false;
+		int curr = n++;
+		heap[curr] = val;
+		while ((curr != 0) && heap[curr] > heap[parent(curr)])
+		{
+			swap(heap, curr, parent(curr));
+			curr = parent(curr);
+		}
+		return true;
+	}
+
+	void siftdown(int pos)
+	{
+		while (!isLeaf(pos))
+		{
+			int j = leftchild(pos);
+			int rc = rightchild(pos);
+			if (heap[j] < heap[rc])
+				j = rc;
+			if (heap[pos] >= heap[j])return;
+			swap(heap, j, pos);
+
+			pos = j;
+		}
+	}
+
+	void buildHeap()
+	{
+		for (int i = n / 2 - 1; i >= 0; i--)
+		{
+			siftdown(i);
+		}
+	}
+
+	bool removemax()
+	{
+		if (n == 0)return false;
+		swap(heap, 0, --n);
+		if (n != 0)
+			siftdown(0);
+		return true;
+	}
+
+	bool remove(int pos)
+	{
+		if (pos < 0 || pos >= n)
+		{
+			return false;
+		}
+		swap(heap, pos, --n);
+		while ((heap[pos] > heap[parent(pos)]) && (pos != 0))
+		{
+			swap(heap, pos, parent(pos));
+			pos = parent(pos);
+		}
+		siftdown(pos);
+		return true;
+	}
+};
+vector<int>arr;
+int tem[1000];
+int cnt;
+int main()
+{
+	string input;
+	getline(cin, input);
+	int temp;
+	stringstream ss(input);
+	while (ss >> temp)
+	{
+		tem[cnt++] = temp;
+	}
+	maxheap test(tem,  10000,cnt);
+	for (auto& term : arr)
+	{
+		test.insert(term);
+	}
+	test.buildHeap();
+	int size = test.n;
+	for (int i = 0; i < test.n; i++)
+	{
+		cout << test.heap[i] << " ";
+	}
+	cout << endl;
+	arr.clear();
+	for (int i = 0; i < test.n; i++)
+	{
+		test.removemax();
+	}
+	for (int i = size-1; i>=0; i--)
+	{
+		arr.push_back(test.heap[i]);
+	}
+	for (auto& term : arr)
+	{
+		cout << term << " ";
+	}
+	cout << endl;
+}
+*/
+/*#include <iostream>
+#include <vector>
+
+using namespace std;
+
+// 调整堆，使其满足最小堆性质
+void heapify(vector<int>& arr, int n, int i) {
+	int smallest = i;
+	int left = 2 * i + 1;
+	int right = 2 * i + 2;
+
+	if (left < n && arr[left] < arr[smallest]) {
+		smallest = left;
+	}
+
+	if (right < n && arr[right] < arr[smallest]) {
+		smallest = right;
+	}
+
+	if (smallest != i) {
+		swap(arr[i], arr[smallest]);
+		heapify(arr, n, smallest);
+	}
+}
+
+// 堆排序（从大到小）
+void heapSort(vector<int>& arr, int n) {
+	// 建立最小堆
+	for (int i = n / 2 - 1; i >= 0; i--) {
+		heapify(arr, n, i);
+	}
+
+	// 输出中间建成的堆
+
+	for (int i = 0; i < n; i++) {
+		cout << arr[i] << " ";
+	}
+	cout << endl;
+
+	// 逐步取出堆顶元素，重新调整堆
+	for (int i = n - 1; i > 0; i--) {
+		swap(arr[0], arr[i]);
+		heapify(arr, i, 0);
+	}
+}
+
+int main() {
+	vector<int> arr = { 20, 12, 17, 35, 51, 15, 22, 29, 40, 26, 23, 19 };
+	int n = arr.size();
+
+
+
+	// 进行堆排序（从大到小）
+	heapSort(arr, n);
+
+
+	for (int i = 0; i < n; i++) {
+		cout << arr[i] << " ";
+	}
+	cout << endl;
+
+	return 0;
+}
+*/
+
+/*#include<iostream>
+#include<algorithm>
+#include<cstring>
+using namespace std;
+int m;//测试用例
+int ru[2600];//记录入度
+int main()
+{
+	cin >> m;
+	for (int i = 0; i < m; i++)
+	{
+		int n, c;
+		cin >> n >> c;
+		for (int i = 0; i < c; i++)
+		{
+			int u, v;
+			cin >> u >> v;
+			ru[v]++;
+		}
+		sort(ru, ru + n);
+		cout << ru[n - 1] << endl;
+	}
+}
+*/
+
+
+
+//使用的是kruskal算法
+#include<iostream>
+#include<queue>
+#include<algorithm>
+
+using namespace std;
+int n;//顶点个数
+int cnt;//三元组个数
+int ans;//存储权值
+struct edge
+{
+	int from;//起点
+	int to;//终点
+	int w;//权值
+	int next;//下一条边
+
+	//自定义比较函数
+}e[10000];
+int ecnt;//边数
+int head[10000];//顶点个数
+priority_queue<edge>qu;
+int set_[10000];//并查集
+bool cmp(edge x, edge y)
+{
+	return x.w < y.w;
+}
+int find(int x)
+{
+	if (x == set_[x])
+		return x;
+	return set_[x] = find(set_[x]);
+}
+void add(int u, int v,int w)
+{
+	cnt++;
+	e[cnt].from = u;
+	e[cnt].next = head[u];
+	e[cnt].to = v;
+	e[cnt].w = w;
+	head[u] = cnt;
+	
+
+}
+void kruskal()
+{
+	for (int i = 1; i <= ecnt; i++)
+	{
+
+		if (find(e[i].from) == find(e[i].to))
+		{
+			continue;
+		}
+		else
+		{
+			int e1 = find(e[i].from);
+			int e2 = find(e[i].to);
+			ans += e[i].w;
+			set_[e1] = e2;
+		}
+	}
+}
+int main()
+{
+	cin >> n >> cnt;
+	for (int i = 1; i <= cnt; i++)
+	{
+		int nu1, nu2, nu3;
+		cin >> nu1 >> nu2 >> nu3;
+		add(nu1, nu2, nu3);
+	}
+	sort(e, e + ecnt, cmp);//排序
+	for (int i = 1; i <= ecnt; i++)
+	{
+		cout << e[i].w << " ";
+	}
+	cout << endl;
+	kruskal();
+	cout << ans << endl;
+}
