@@ -1,0 +1,62 @@
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<queue>
+using namespace std;
+int n;//顶点
+int e;//边数
+int s;//起始顶点
+queue<int>qu;
+int vis[1000];
+vector<int>arr[1000];
+void add(int u, int v)
+{
+	arr[u].push_back(v);
+}
+void print(int s)
+{
+	cout << s << " ";
+}
+void bfs(int s)
+{
+	qu.push(s);
+	vis[s] = 1;
+	while (!qu.empty())
+	{
+		int top = qu.front();
+		print(top);
+		qu.pop();
+		for (auto& term : arr[top])
+		{
+			if (!vis[term])
+			{
+				qu.push(term);
+				vis[term] = 1;
+			}
+		}
+	}
+}
+int main()
+{
+	int m;//多少种测试用例
+	cin >> m;
+	for (int i = 0; i < m; i++)
+	{
+		cin >> n >> e >> s;
+		for (int j = 0; j < e; j++)
+		{
+			int u, v;
+			cin >> u>> v;
+			add(u, v);
+			add(v, u);
+		}//输入完了以后
+		//给排序一下
+		for (int j = 0; j < n; j++)
+		{
+			sort(arr[j].begin(), arr[j].end());
+	
+		}
+		bfs(s);
+
+	}
+}
