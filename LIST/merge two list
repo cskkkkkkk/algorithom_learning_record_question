@@ -1,0 +1,133 @@
+#include<iostream>
+#include<vector>
+using namespace std;
+struct ListNode
+{
+	int val;
+	ListNode* next;
+	ListNode(int va)
+	{
+		val = va;
+		next = NULL;
+	}
+};
+ListNode* head=NULL;//合并后的链表
+ListNode* tail=NULL;
+ListNode* p1=NULL;//合并前的第一条链表
+ListNode* p1_tail=NULL;
+vector<int>l;
+ListNode* p2=NULL;//合并后的第二条链表
+ListNode* p2_tail=NULL;
+vector<int>r;
+void cre_old()
+{
+	for (auto& a : l)
+	{
+		if (p1 == NULL)
+		{
+			p1 = p1_tail = new ListNode(a);
+			continue;
+		}
+		p1_tail->next = new ListNode(a);
+		p1_tail = p1_tail->next;
+	}
+	for (auto& b : r)
+	{
+		if (p2 == NULL)
+		{
+			p2 = p2_tail = new ListNode(b);
+			continue;
+		}
+		p2_tail->next = new ListNode(b);
+		p2_tail = p2_tail->next;
+	}
+}
+void cre_new()
+{
+	while (p1 && p2)
+	{
+		if (p1->val <= p2->val)
+		{
+			if (head == NULL)
+			{
+				head =tail= new ListNode(p1->val);
+				p1 = p1->next;
+			}
+			else
+			{
+
+
+				tail->next = new ListNode(p1->val);
+				tail = tail->next;
+				p1 = p1->next;
+			}
+		}
+		else
+		{
+			if (head == NULL)
+			{
+				head = tail = new ListNode(p2->val);
+				p2 = p2->next;
+			}
+			else
+			{
+
+
+				tail->next = new ListNode(p2->val);
+				tail = tail->next;
+				p2 = p2->next;
+			}
+		}
+    }
+	if (p1 == NULL)
+	{
+		if(tail==NULL)
+		{
+			head = tail = p2;
+		}
+		else
+			tail->next = p2;
+	}
+	if (p2 == NULL)
+	{
+		if (tail == NULL)
+		{
+			head = tail = p1;
+		}
+		else
+			tail->next = p1;
+
+	}
+
+}
+void print(ListNode*temp)
+{
+	while (temp)
+	{
+		cout << temp->val << " ";
+		temp = temp->next;
+    }
+	cout << endl;
+}
+int main()
+{
+	int n, m;
+	cin >> n >> m;
+	for (int i = 0; i < n; i++)
+	{
+		int temp;
+		cin >> temp;
+		l.push_back(temp);
+	}
+	for (int i = 0; i < m; i++)
+	{
+		int temp;
+		cin >> temp;
+		r.push_back(temp);
+	}
+	cre_old();
+	cre_new();
+	print(head);
+	l.clear();
+	r.clear();
+}
