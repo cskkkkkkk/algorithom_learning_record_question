@@ -1,0 +1,90 @@
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<cstring>
+using namespace std;
+int n;//点数
+int c;//边数
+int s;//目的地
+int t;//终点
+int vis[3000];//判断每个点是否被访问过
+int dis[3000];//记录距离
+struct node
+{
+	int to;
+	int w;
+	int next;
+}e[10050];
+int head[3000];
+int cnt;//边的数量
+void add(int u, int v, int w)
+{
+	cnt++;
+	e[cnt].next = head[u];
+	e[cnt].to = v;
+	e[cnt].w = w;
+	head[u] = cnt;
+}
+
+struct edge
+{
+	int dis;
+	int pos;
+	bool operator<(const edge&x)const
+	{
+		return x.dis < dis;
+	}
+	edge(int di, int po)
+	{
+		dis = di;
+		pos = po;
+	}
+};
+priority_queue<edge>qu;
+void dijstra()
+{
+	//初始化
+	dis[s] = 0;
+	qu.push(edge(0, s));
+	while (!qu.empty())
+	{
+		edge fa = qu.top();
+		qu.pop();//删掉
+		int pos = fa.pos;
+		int f = fa.dis;
+		if (vis[pos])
+			continue;
+		vis[pos] = 1;
+		for (int i = head[pos]; i; i = e[i].next)
+		{
+			if (dis[e[i].to] > dis[pos] + e[i].w)
+			{
+				dis[e[i].to] = dis[pos] + e[i].w;
+				if (!vis[e[i].to])
+				{
+
+					qu.push(edge(dis[e[i].to], e[i].to));
+				}
+			}
+		}
+	}
+}
+int main()
+{
+	cin >> n >> c >> s>>t;
+	for (int i = 0; i < c; i++)
+	{
+		int from, to, w;
+		cin >> from >> to >> w;
+		add(from, to, w);
+		add(to, from, w);
+	}//建图完毕
+
+	for (int i = 1; i <= n; ++i)dis[i] = 0x7fffffff;
+
+
+	dijstra();
+	cout << dis[t] << endl;
+	return 0;
+
+}
