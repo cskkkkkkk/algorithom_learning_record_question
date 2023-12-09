@@ -1,0 +1,109 @@
+//堆和堆排序实现代码
+#include<iostream>
+using namespace std;
+int heap[10000] = { 11,8,4,13,344,3,2,7 };
+
+int parent(int pos)
+{
+	return (pos - 1) / 2;
+}
+int lchild(int pos)
+{
+	return 2 * pos + 1;
+}
+int rchild(int pos)
+{
+	return 2 * pos + 2;
+}
+int n=8;//这是heap数组中元素数量
+bool isleaf(int pos)
+{
+	return (pos >= n / 2) && (pos < n);
+}
+void swap(int i, int j)
+{
+	int temp = heap[j];
+	heap[j] = heap[i];
+	heap[i] = temp;
+}
+void siftdown(int pos)
+{
+	while (!isleaf(pos))
+	{
+		int l = lchild(pos);
+		int r = rchild(pos);
+		if ((r < n) && heap[l] < heap[r])
+			l = r;
+		if (heap[pos] >= heap[l])return;//这句话一开始漏了
+		swap(pos, l);
+		pos = l;
+	}
+}
+void buildheap()
+{
+	for (int i = n / 2 - 1; i >= 0; i--)
+	{
+		siftdown(i);
+	}
+}
+int removemax()
+{
+	int temp = heap[0];
+	swap(0, --n);
+	if(n!=0)
+		siftdown(0);
+	return temp;//返回被删除的值
+}
+int remove(int pos)//被删除元素的序号
+{
+	int temp = heap[pos];
+	swap(pos, n--);
+	while (pos != 0 && heap[pos] > heap[parent(pos)])
+	{
+		swap(pos, parent(pos));
+		pos = parent(pos);
+	}
+	siftdown(pos);
+	return temp;
+}
+void insert(int val)
+{
+	heap[++n] = val;
+	int pos = n;
+	while (pos!=0&&heap[pos]>heap[parent(pos)])
+	{
+		swap(pos, parent(pos));
+		pos = parent(pos);
+	}
+}
+void heapsort()
+{
+	buildheap();
+	for (int i = 0; i < 8; i++)
+	{
+		removemax();
+	}
+}
+int main()
+{
+	cout << "original arr:" << endl;
+	cout << "n:" << n << endl;
+	for (int i = 0; i < 8; i++)
+	{
+		cout << heap[i] << " ";
+	}
+	cout << endl;
+	heapsort();
+	cout << "n:" << n << endl;
+	cout << "heapsort arr:" << endl;
+	for (int i = 0; i < n; i++)
+	{
+		cout << heap[i] << " ";
+	}
+	cout << endl;
+	for (int i = 7; i >= 0; i--)
+	{
+		cout << heap[i] << " ";
+	}
+	cout << endl;
+}
