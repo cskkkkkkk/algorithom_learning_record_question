@@ -1,0 +1,47 @@
+#include<iostream>
+#include<iostream>
+#include<cstring>
+using namespace std;
+int n;//树的节点个数
+int from, to;
+int graph[105][105];//存储图
+int width[1000000];
+int main()
+{
+	memset(width, 0, sizeof(width));
+	for (int i = 0; i < 105; i++)
+		for (int j = 0; j < 105; j++)
+			if (i != j)
+				graph[i][j] = 99999;
+	//初始化
+	cin >> n;
+	for (int i = 0; i < n - 1; i++)
+	{
+		int u, v;
+		cin >> u >> v;
+		graph[u][v] = 1;
+		graph[v][u] = 2;//视作一个有向图
+	}
+	cin >> from >> to;
+	for (int k = 1; k <= n; k++)
+		for (int i = 1; i <= n; i++)
+			for (int j = 1; j <= n; j++)
+				graph[i][j] = min(graph[i][j], graph[i][k] + graph[k][j]);//floyd算法
+	int height = -190;
+	int maxn = 1;
+	for (int i = 2; i <= n; i++)
+	{
+		height = max(graph[1][i], height);
+		width[graph[1][i]]++;
+		maxn = max(maxn, graph[i][1]);
+	}
+	int max_w = -100;
+	for (int i = 1; i <=maxn ; i++)
+	{
+		max_w = max(max_w, width[i]);
+	}
+	cout << height+1 << endl;
+	cout << max_w << endl;
+	cout << graph[from][to] << endl;
+
+}
